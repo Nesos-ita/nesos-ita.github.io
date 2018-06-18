@@ -52,7 +52,7 @@ At this point it was clear that we could not open the bios or boot anything...
 Now a normal person call the assistence or buy a new pc but...  
 I could not accept this! it obviously works as to show that error it *MUST* work! CPU, RAM, BIOS itself, keyboard, video card, monitor, hdd, every component was working otherwise we couldn't have that error displayed!
 
-# Time to tryharder - Chalenge acceped
+# Time to tryharder - Challenge acceped
 My idea was to dump the bios, read the boot partition UUID from the bios and set it on the hard disk partiton so that it would boot ubuntu as if it was never deleted.  
 This is necessary because while old-style MBR based partition table uses the first sector as partitions index, have max four partitions and use a *bootable flag* on the partition entry to say what is bootable.  
 GPT (GUID Partition Table) support many more partitions and have an UUID that identify them.
@@ -90,7 +90,7 @@ Here is the finished layout and milling.
 Actually the most left and right pins have been modified to keep the trace larger since it was possible:  
 ![](/assets/fixing-bricked-pc/milling.jpg)  
 You can see that the board is not perfect due to backslash, but considering that the cnc milling machine is hand-made and made of recycled wood: legs of the sofa, kitchen furniture door, bedroom shelf. The precision is far higher than expected.  
-I like making things in the [MacGyver](https://en.wikipedia.org/wiki/MacGyver_(1985_TV_series) way.  
+I like making things in the [MacGyver](https://en.wikipedia.org/wiki/MacGyver_\(1985_TV_series\)) way.  
 The pins distance is 0,65mm and pin size is 0,3 mm leaving us 0,35mm of space between pins.  
 Also the cutter was not the correct one: size 3mm conical shape, but this is what the shop sold...  
 Autolevel played an imporant role.  

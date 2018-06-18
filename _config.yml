@@ -9,14 +9,16 @@
 title: NesosTechnology
 #email: your-email@domain.com
 description: > # this means to ignore newlines until "baseurl:"
- NesosTechnology - I do infosec for fun and no profit.
+ NesosTechnology - I do infosec for fun and no profit - DIY Security researcher
 baseurl: ""
 url: ""
 post_limit: 5
 # Footer
 footer_left: > 
- NesosTechnology - I do infosec for fun and no profit.
-footer_right: "DESTRA<br>DUE"
+ NesosTechnology<br>
+ I do infosec for fun and no profit<br>
+ DIY Security Researcher
+footer_right: "Contacts? If you know me, you know how to contact me.<br>If you don't, feel free to open a GitHub issue for any request"
 
 # Build settings
 markdown: kramdown

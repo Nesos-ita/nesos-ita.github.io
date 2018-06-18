@@ -43,17 +43,17 @@ This because usually cd have higher boot priority, and floppy even higher.
 We haven't tried floppy as we don't have any floppy or floppy reader.
  - We tried the "phoenix crisis disk", it adds the necessary files on usb key and we booted while holding fn+esc or fn+f (depends on the model) but there was no visible/useful effect (power led was blinking).  
 We made many tests using different bios file names: "bios", "bios.wph", ...  
-After several tests, when we setted the correct bios file name "ZHJ.FD" (which was the original name from the downloaded bios upgrade), the power led started blinking "differently". We hoped that it was reflashing the bios but the usb key led was not indicating any activity and in fact nothing happened.  
+After several tests, when we set the correct bios file name "ZHJ.FD" (which was the original name from the downloaded bios upgrade), the power led started blinking "differently". We hoped that it was reflashing the bios but the usb key led was not indicating any activity and in fact nothing happened.  
  - We did not have a debug card, i have found a schematic online but it was for ISA BUS (desktop pc).  
 If you are interested: [Build your own P.O.S.T. card](http://bbright.tripod.com/information/postcard.htm)  
  - We also tried to install ubuntu into the notebook HDD from another pc since it doesn't take much effort, but as expected ubuntu wasn't seen/booted by the pc (more on this later).  
 
 At this point it was clear that we could not open the bios or boot anything...  
-Now a normal person call the assistence or buy a new pc but...  
+Now a normal person call the assistance or buy a new pc but...  
 I could not accept this! it obviously works as to show that error it *MUST* work! CPU, RAM, BIOS itself, keyboard, video card, monitor, hdd, every component was working otherwise we couldn't have that error displayed!
 
 # Time to tryharder - Challenge acceped
-My idea was to dump the bios, read the boot partition UUID from the bios and set it on the hard disk partiton so that it would boot ubuntu as if it was never deleted.  
+My idea was to dump the bios, read the boot partition UUID from the bios and set it on the hard disk partition so that it would boot ubuntu as if it was never deleted.  
 This is necessary because while old-style MBR based partition table uses the first sector as partitions index, have max four partitions and use a *bootable flag* on the partition entry to say what is bootable.  
 GPT (GUID Partition Table) support many more partitions and have an UUID that identify them.
 It is not enough to reinstall ubuntu from another pc and plug the disk, the UUID will be different since it is a random number for each partition.  
@@ -62,7 +62,7 @@ My pc for example (again acer) behave differently: if you remove the disk, the u
 
 ## Bios dump
 ### Old notebook bios dump
-I have dumped a bios some time ago from an old half-broken notebook to learn how to do it and to make a 3GHz carlillon :)  
+I have dumped a bios some time ago from an old half-broken notebook to learn how to do it and to make a 3GHz carillon :)  
 It wasn't very hard to dump it:  
 I desoldered the chip (W25X80) without caring much of the result/the mother board since the pc was broken anyway and made the pins longer as shown in the photo:  
 ![](/assets/fixing-bricked-pc/oldBios.jpg)  
@@ -93,7 +93,7 @@ You can see that the board is not perfect due to backslash, but considering that
 I like making things in the [MacGyver](https://en.wikipedia.org/wiki/MacGyver_\(1985_TV_series\)) way.  
 The pins distance is 0,65mm and pin size is 0,3 mm leaving us 0,35mm of space between pins.  
 Also the cutter was not the correct one: size 3mm conical shape, but this is what the shop sold...  
-Autolevel played an imporant role.  
+Autolevel played an important role.  
 Anyway for the next time a cylindrical one will do the job better.  
 ![](/assets/fixing-bricked-pc/adapterPCB.jpg)  
 The chip is super small and not easy to solder, but in the end i managed to do it without short circuits, note also on the right the welding metal and it's size which is quite bigger than chip pins.  
@@ -131,7 +131,7 @@ I have dumped it about 10 times and there was no single good copy.
 I have used filter capacitors on the power supply, wires were short, i tried a lower frequency but the problem was still there. I wasn't sure about the problem...  
 
 ### Part 3: Using a trick to fix the errors
-Since the error rate was low, i decided to code a program that would keep, for each byte, the most occourring one: For example if in 10 reads the first byte is 0x12 nine times and is 0x55 only one time i would keep the first byte as 0x12.  
+Since the error rate was low, i decided to code a program that would keep, for each byte, the most occurring one: For example if in 10 reads the first byte is 0x12 nine times and is 0x55 only one time i would keep the first byte as 0x12.  
 Obviously if half reads say 0x12 and other half say 0x55 your result is useless, but this wasn't the case: the worst case was 7/10 equal.  
 With this trick i had a good copy that did not give any error/warning in *UEFI Tool*.  
 
@@ -185,7 +185,7 @@ After some searching i found out a linux command:
 `Systemctl reboot --firmware-setup`  
 but also this one failed; I also found out that GRUB can do it, you only have to type: `fwsetup`  
 This one failed too but it gave me an interesting error: "Failed to set OsIndications"  
-After some searching i found out that this is an efi variable, that if setted to 1 boots the pc in firmware mode instead of normal; this only if *OsIndicationsSupported* is setted to 1 too.  
+After some searching i found out that this is an efi variable, that if set to 1 boots the pc in firmware mode instead of normal; this only if *OsIndicationsSupported* is set to 1 too.  
 I checked from the running ubuntu the efi var and this was the case, it was supported.  
 You can view the efi vars from linux by navigating to: `/sys/firmware/efi/vars/`  
 So why i couldn't set the variable?  
@@ -196,13 +196,13 @@ Maybe friend disabled the password so the efi var has been "deleted" (read: inva
  - Gif and Jpg decoder, why gif?!?!? i can only imagine how many vulnerabilities it has inside... let's throw "[kiss](https://en.wikipedia.org/wiki/KISS_principle)" philosophy outside the window... what could possibly go wrong?   
  - Two efi vars: secure boot=1 enforcesecureboot=1  
  - An efi var: reset factory=0  
-So my new plan was to **write**  *secure boot=0* or try to set that *reset factory=1* andsee what happens.  
+So my new plan was to **write**  *secure boot=0* or try to set that *reset factory=1* and see what happens.  
 Some friend suggested "why don't you update the bios?", is not that simple, the downloaded update was 4mb, while the flash dump image is 8mb because it has ME region and other things; Also, it's not clear what you should replace: at left you can see the dump that has the VSS store full of the efi vars like the boot one, at right (the downloaded upgrade) that section is simply missing, there is instead some padding.  
 ![](/assets/fixing-bricked-pc/noManualUpgrade.jpg)  
 
 ### Writing the SPI flash bios chip
 #### Fixing the reading problem
-Now we have a big problem, while we can ignore read errors by reading multiple times and keep the most occouring result, we can't do the same while writing because spi flash must be erased before writing and the smallest eresable part is a sector of 4096 bytes in size.  
+Now we have a big problem, while we can ignore read errors by reading multiple times and keep the most occurring result, we can't do the same while writing because spi flash must be erased before writing and the smallest erasable part is a sector of 4096 bytes in size.  
 On writing we can program it in pages of size 256 bytes. We can't hope to write 4096 bytes without an error, we have to find out why it wasn't reading correctly and fix it before continuing.  
 I decided to use the oscilloscope to check the waveform.  
 Since it's an old analog scope it can only show repetitive signals and the spi communication isn't periodic or repetitive, so i decided to code a small script that kept requesting the device id:  
@@ -213,7 +213,7 @@ while 1:
 The communication is not yet periodic, but it is repetitive and can be viewed on the scope, adjusting [*var holdoff*](https://www.youtube.com/watch?v=ta096oBzSac "A bit long video, but well made") on the scope can help triggering  
 ![](/assets/fixing-bricked-pc/waveform.jpg)  
 The brighter part is the one zoomed down where you can see the falling edge not perfectly vertical (which is normal, as the components are not ideal).  
-Anyway, as you can see the signal is "clean", there is't any noise, the circuit is fine, every wire is connected, there are two capacitors: one of 47µF and the other 100nF for each power line; you can find more about why the capacitors here: [A practical guide to high-speed PCB layout](http://www.analog.com/media/en/analog-dialogue/volume-39/number-3/articles/high-speed-printed-circuit-board-layout.pdf)  
+Anyway, as you can see the signal is "clean", there isn't any noise, the circuit is fine, every wire is connected, there are two capacitors: one of 47µF and the other 100nF for each power line; you can find more about why the capacitors here: [A practical guide to high-speed PCB layout](http://www.analog.com/media/en/analog-dialogue/volume-39/number-3/articles/high-speed-printed-circuit-board-layout.pdf)  
 To keep it simple, the big one is an "energy store" to smooth lower frequencies, the small one is there to cut away higher frequency noise to/from the voltage level shifter chip.  
 Here you can see the internal of the *TXB0108* voltage level shifter:  
 ![](/assets/fixing-bricked-pc/TXB0108-architettura.jpg)  
@@ -244,17 +244,17 @@ while 1:
 ```
 This program makes a square wave, read it back and print any error along with the time so that even if the console is full of errors and start scrolling you can notice it.  
 After some tests i have found something interesting:  
-touching the 3,3V side of the wire was enough to fix the problem, also attaching the oscilloscope probe that has an impedence of 10MΩ fixed the problem (impedence depends also from the frequency, but still is quite high and should be "transparent" to the circuit)  
+touching the 3,3V side of the wire was enough to fix the problem, also attaching the oscilloscope probe that has an impedance of 10MΩ fixed the problem (impedance depends also from the frequency, but still is quite high and should be "transparent" to the circuit)  
 The datasheet also say:  
 > Do not recommend having the external pullup or pulldown resistors. If mandatory, it is recommended the value should be larger than 50 kΩ.
 
 Pro tip: **DO-NOT-TRUST-THEM**, "you don't need pulldown" they said... but after adding 10kΩ pulldown resistors on the 3,3V side (the raspberry one) the problem was gone.  
 So much time wasted in searching something different from pulldown resistors because "you don't need them so that can't be the problem"...  
 Why 10kΩ? well that is what i had at home :)  
-To be sure that everything worked i have read the bios two times: this time the hashes were equal and they also matched the previous copy obtained by keeping the most occouring byte.  
+To be sure that everything worked i have read the bios two times: this time the hashes were equal and they also matched the previous copy obtained by keeping the most occurring byte.  
 
-#### Wrting
-With the read (and write) problem fixed, i could now write to the bios knowing that it whould have been written correctly and that i could always revert to a *known good* state by reflashing the original image.  
+#### Writing
+With the read (and write) problem fixed, i could now write to the bios knowing that it would have been written correctly and that i could always revert to a *known good* state by reflashing the original image.  
 So i tried to change secure boot flags without success.  
 After writing and reading the new result i always got the old value, writing wasn't working.  
 The GRUB error gave me an idea: it said that it couldn't write *OsIndications*, we know that it is an efi variable, so what if the bios was write-protected?  
@@ -282,7 +282,7 @@ Things needed to flip that bit? tons of old and new knowledge; two months of wor
 
 I gave the pc back to my friend that finally gave me ~~hella cash~~
  a thanks.  
-I don't want you to think that he is a bad firend, i have done it for fun, not for profit; this was clear to both even before starting. Anyway it was probably anti-econimic repair since looong time, in fact multiple people told me so but i don't care.  
+I don't want you to think that he is a bad friend, i have done it for fun, not for profit; this was clear to both even before starting. Anyway it was probably anti-economic repair since looong time, in fact multiple people told me so but i don't care.  
 It has been a long but funny journey ^\_^  
 
 ## Things missing
@@ -298,7 +298,7 @@ Another missing thing is  removing *intel ME*; we were thinking about trying to 
 
 Other thing that i did not try is to backdoor the bios, [computrace module](https://securelist.com/absolute-computrace-revisited/58278/) was there but there was no option to enable or disable it, nothing in the bios that indicated it's presence. It would be nice to replace the dropped exe with a custom one, having ssh in case someone steal the pc might be useful.  Basically, the pc was working and we did not test anything else.  
 
-But pheraps the most important question is: **What caused this?**  
+But perhaps the most important question is: **What caused this?**  
 It can be a simple stupid bug, but i like to think that it was because of [cosmic rays](https://en.wikipedia.org/wiki/Cosmic_ray#Effect_on_electronics) that flipped the protection bit.  
 I don't want to think that i worked for a month because of a dumb person that can't do his job properly; ok it was funny but still vbox bios was a 1 min solution  
 
@@ -306,8 +306,8 @@ I don't want to think that i worked for a month because of a dumb person that ca
  - People should code better bios.  
  - The efi var *OsIndications* is used to access the bios, apparently also if you press F2 key.  
  - Most of the efi vars are "mounted" read-only by linux because some are not standard and erasing or modifying them can brick the pc.  
- - Without the bios chip if you turn on the pc absolutly nothing happens, not even a led or a fan.  
- - I couldn't find the fastboot option in the original bios so maybe my friend was wrong, anyway never enable it! i have read only negatve things about it.  
+ - Without the bios chip if you turn on the pc absolutely nothing happens, not even a led or a fan.  
+ - I couldn't find the fastboot option in the original bios so maybe my friend was wrong, anyway never enable it! i have read only negative things about it.  
  - Some people are bugged:  
 *Expected behavior:* People say "wow nice findings, thanks for sharing it can be useful, how did you do xyz?"  
 *Actual behavior:* Some people started kidding me by answering any asked question by any person in the computer group with "you have to desolder the bios" (like: how do i defragment hdd? you have to desolder bios!).  
@@ -315,7 +315,7 @@ Anyway, since i have better things to do than caring about such people i decided
  - Pressing fn+tab while in the bios, save and exit, reopen bios, unlocks a "secret" menu full of advanced things (backdoors everywhere)  
  - Looks like that this wasn't the only case, see: [I think I just bricked my firmware](https://bbs.archlinux.org/viewtopic.php?id=149758)  
 He was lucky that F12 (probably) showed him the boot menu so he selected usb key and solved, of course i tried the [insyde bios recovery guide](https://www.bios-mods.com/bios-recovery/insyde-bios-recovery/) without success.  
- - Do not mess with uefi if possible, seems full of bugs that will birck your pc. Want to change OS? stay with legacy bios and mbr unless you need uefi for a specific reason.  
+ - Do not mess with uefi if possible, seems full of bugs that will brick your pc. Want to change OS? stay with legacy bios and mbr unless you need uefi for a specific reason.  
  - Flash memory has low cost, so there is no need to have an old CMOS RAM memory that is lost if you remove the battery, everything is stored directly on the spi flash chip, which is problematic if you want to clear it. The battery is still there only for the RTC clock  
  - Well, you have read the article right?  
 

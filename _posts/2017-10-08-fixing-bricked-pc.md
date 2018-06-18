@@ -214,7 +214,7 @@ The communication is not yet periodic, but it is repetitive and can be viewed on
 ![](/assets/fixing-bricked-pc/waveform.jpg)  
 The brighter part is the one zoomed down where you can see the falling edge not perfectly vertical (which is normal, as the components are not ideal).  
 Anyway, as you can see the signal is "clean", there is't any noise, the circuit is fine, every wire is connected, there are two capacitors: one of 47µF and the other 100nF for each power line; you can find more about why the capacitors here: [A practical guide to high-speed PCB layout](http://www.analog.com/media/en/analog-dialogue/volume-39/number-3/articles/high-speed-printed-circuit-board-layout.pdf)  
-To keep it simple, the big one is an "energy store", the small one is there to cut away noise to/from the voltage level shifter chip.  
+To keep it simple, the big one is an "energy store" to smooth lower frequencies, the small one is there to cut away higher frequency noise to/from the voltage level shifter chip.  
 Here you can see the internal of the *TXB0108* voltage level shifter:  
 ![](/assets/fixing-bricked-pc/TXB0108-architettura.jpg)  
 The datasheet says:  
